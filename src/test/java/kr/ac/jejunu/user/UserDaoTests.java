@@ -13,8 +13,6 @@ import static org.hamcrest.core.Is.is;
 
 public class UserDaoTests {
     private static UserDao userDao;
-
-
     String name = "haeeun";
     String password = "1234";
 
@@ -39,11 +37,7 @@ public class UserDaoTests {
     @Test
     public void insert() throws SQLException, ClassNotFoundException {
 
-        User user = new User();
-        user.setName(name);
-        user.setPassword(password);
-
-        userDao.insert(user);
+        User user = insertedUser();
 
         User insertedUser = userDao.findById(user.getId());
         assertThat(insertedUser.getPassword(), is(password));
@@ -54,11 +48,8 @@ public class UserDaoTests {
     @Test
     public void update() throws SQLException, ClassNotFoundException {
 
-        User user = new User();
-        user.setName(name);
-        user.setPassword(password);
 
-        userDao.insert(user);
+        User user = insertedUser();
 
 
         String updatedName = "updatedhaeeun";
@@ -73,19 +64,26 @@ public class UserDaoTests {
         assertThat(updatedUser.getName(), is(updatedName));
     }
 
+
+
     @Test
     public void delete() throws SQLException, ClassNotFoundException {
 
+        User user = insertedUser();
+        userDao.delete(user.getId());
+
+        User deletedUser = userDao.findById(user.getId());
+        assertThat(deletedUser, IsNull.nullValue());
+    }
+
+    private static User insertedUser() throws ClassNotFoundException, SQLException {
+        String name = "haeeun";
+        String password = "1234";
         User user = new User();
         user.setName(name);
         user.setPassword(password);
 
         userDao.insert(user);
-
-
-        userDao.delete(user.getId());
-
-        User deletedUser = userDao.findById(user.getId());
-        assertThat(deletedUser, IsNull.nullValue());
+        return user;
     }
 }
