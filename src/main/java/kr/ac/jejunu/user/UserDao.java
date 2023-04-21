@@ -1,41 +1,39 @@
 package kr.ac.jejunu.user;
 
-import javax.sql.DataSource;
-import javax.xml.transform.Result;
 import java.sql.*;
 
 public class UserDao {
-    private final JdbcContext jdbcContext;
+    final JdbcContext jdbcContext;
 
     public UserDao(JdbcContext jdbcContext) {
         this.jdbcContext = jdbcContext;
     }
 
     public User findById(Long id) throws ClassNotFoundException, SQLException {
-            StatementStrategy statementStrategy = new FindByIdStatementStrategy();
-        return jdbcContext.jdbcContextForFindById(id, statementStrategy);
+        Object[] params = new Object[] {id};
+        String sql = "select id, name, password from userinfo where id = ?";
+        return jdbcContext.findById(sql, params);
     }
 
 
 
     public void insert(User user) throws ClassNotFoundException, SQLException {
-            StatementStrategy statementStrategy = new InsertStatementStrategy();
-        jdbcContext.jdbcContextForInsert(user, statementStrategy);
+        Object[] params = new Object[] {user.getName(), user.getPassword()};
+        String sql = "insert into userinfo (name, password) values (?,?)";
+        jdbcContext.insert(user,sql, params);
     }
 
 
-
-
-    public void update(User user) throws ClassNotFoundException, SQLException {
-        StatementStrategy statementStrategy = new UpdateStatementStrategy();
-        jdbcContext.jdbcContextForUpdate(user, statementStrategy);
+    public void update(User user) throws SQLException, ClassNotFoundException {
+        Object[] params = new Object[]{user.getName(), user.getPassword(), user.getId()};
+        String sql = "update userinfo set name = ?, password = ? where id = ?";
+        jdbcContext.update(sql,params);
     }
-
-
 
     public void delete(Long id) throws ClassNotFoundException, SQLException {
-            StatementStrategy statementStrategy = new DeleteStatementStrategy();
-        jdbcContext.jdbcContextForDelete(id, statementStrategy);
+        Object[] params = new Object[]{id};
+        String sql = "delete from userinfo where id = ?";
+        jdbcContext.update(sql,params);
     }
 
 
