@@ -4,6 +4,12 @@ import javax.xml.transform.Result;
 import java.sql.*;
 
 public class UserDao {
+    private final ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
+
     public User findById(Long id) throws ClassNotFoundException, SQLException {
         ConnectionMaker connectionMaker = new JejuConnectionMaker();
         Connection connection = connectionMaker.getConnection();
@@ -29,7 +35,8 @@ public class UserDao {
 
 
     public void insert(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = getConnection();
+        ConnectionMaker connectionMaker = new JejuConnectionMaker();
+        Connection connection = connectionMaker.getConnection();
 
         PreparedStatement preparedStatement = connection.prepareStatement("insert into userinfo (name, password) values (?,?)", Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, user.getName());
@@ -44,10 +51,4 @@ public class UserDao {
         connection.close();
     }
 
-
-    public Connection getConnection() throws ClassNotFoundException, SQLException;
-//        Class.forName("com.mysql.cj.jdbc.Driver");
-//        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/jeju", "jeju", "jejupw");
-//        return connection;
-//    }
 }
