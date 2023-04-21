@@ -1,5 +1,6 @@
 package kr.ac.jejunu.user;
 
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
@@ -13,6 +14,10 @@ import static org.hamcrest.core.Is.is;
 public class UserDaoTests {
     private static UserDao userDao;
 
+
+    String name = "haeeun";
+    String password = "1234";
+
     @BeforeAll
     public static void setup() {
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(DaoFactory.class);
@@ -22,8 +27,6 @@ public class UserDaoTests {
     @Test
     public void get() throws SQLException, ClassNotFoundException {
         Long id = 1l;
-        String name = "haeeun";
-        String password = "1234";
 
         User user = userDao.findById(id);
 
@@ -35,8 +38,6 @@ public class UserDaoTests {
 
     @Test
     public void insert() throws SQLException, ClassNotFoundException {
-        String name = "haeeun";
-        String password = "1234";
 
         User user = new User();
         user.setName(name);
@@ -47,5 +48,44 @@ public class UserDaoTests {
         User insertedUser = userDao.findById(user.getId());
         assertThat(insertedUser.getPassword(), is(password));
         assertThat(insertedUser.getName(), is(name));
+    }
+
+
+    @Test
+    public void update() throws SQLException, ClassNotFoundException {
+
+        User user = new User();
+        user.setName(name);
+        user.setPassword(password);
+
+        userDao.insert(user);
+
+
+        String updatedName = "updatedhaeeun";
+        String updatedPassword = "updated1234";
+        user.setName(updatedName);
+        user.setPassword(updatedPassword);
+
+        userDao.update(user);
+
+        User updatedUser = userDao.findById(user.getId());
+        assertThat(updatedUser.getPassword(), is(updatedPassword));
+        assertThat(updatedUser.getName(), is(updatedName));
+    }
+
+    @Test
+    public void delete() throws SQLException, ClassNotFoundException {
+
+        User user = new User();
+        user.setName(name);
+        user.setPassword(password);
+
+        userDao.insert(user);
+
+
+        userDao.delete(user.getId());
+
+        User deletedUser = userDao.findById(user.getId());
+        assertThat(deletedUser, IsNull.nullValue());
     }
 }
