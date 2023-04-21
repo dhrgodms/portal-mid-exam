@@ -22,7 +22,7 @@ public class DaoFactory {
 
     @Bean
     public UserDao userDao() throws ClassNotFoundException {
-        UserDao userDao = new UserDao(dataSource());
+        UserDao userDao = new UserDao(jdbcContext());
         return userDao;
     }
 
@@ -34,5 +34,10 @@ public class DaoFactory {
         dataSource.setPassword(password);
         dataSource.setUsername(username);
         return dataSource;
+    }
+
+    @Bean
+    public JdbcContext jdbcContext() throws ClassNotFoundException {
+        return new JdbcContext(dataSource());
     }
 }
